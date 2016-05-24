@@ -41,7 +41,7 @@ public class IMAPConnectionProvider extends AbstractRetrieverProvider implements
     @Override
     public RetrieverConnection connect(IMAPConfiguration config) throws ConnectionException
     {
-        return new RetrieverConnection(PROTOCOL_IMAP, getUser(), getPassword(), getHost(), getPort(), getProperties(), null, config.getFolder());
+        return new RetrieverConnection(PROTOCOL_IMAP, user, password, host, port, connectionTimeout, readTimeout, writeTimeout, properties, null, config.getFolder());
     }
 
     /**
@@ -59,7 +59,7 @@ public class IMAPConnectionProvider extends AbstractRetrieverProvider implements
     @Override
     public ConnectionValidationResult validate(RetrieverConnection connection)
     {
-        return ConnectionValidationResult.success();
+        return connection.validate();
     }
 
     /**
@@ -68,15 +68,6 @@ public class IMAPConnectionProvider extends AbstractRetrieverProvider implements
     @Override
     public ConnectionHandlingStrategy<RetrieverConnection> getHandlingStrategy(ConnectionHandlingStrategyFactory<IMAPConfiguration, RetrieverConnection> connectionHandlingStrategyFactory)
     {
-        return connectionHandlingStrategyFactory.supportsPooling();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getPort()
-    {
-        return port;
+        return connectionHandlingStrategyFactory.cached();
     }
 }

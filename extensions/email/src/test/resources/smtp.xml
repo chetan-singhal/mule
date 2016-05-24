@@ -31,7 +31,7 @@
                 <email:bcc-address value="alejandro.g.marra@mulesoft.com"/>
             </email:bcc-addresses>
             <email:attachments>
-                <email:email-attachment data="#[Thread.currentThread().getContextClassLoader().getResource('attachment.json')]" id="id"/>
+                <email:email-attachment content="#[Thread.currentThread().getContextClassLoader().getResource('attachment.json')]" id="id"/>
             </email:attachments>
         </email:send>
     </flow>

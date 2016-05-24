@@ -10,7 +10,7 @@ import static org.mule.runtime.api.connection.ConnectionExceptionCode.UNKNOWN;
 import static org.mule.runtime.api.connection.ConnectionValidationResult.failure;
 import static org.mule.runtime.api.connection.ConnectionValidationResult.success;
 import org.mule.extension.email.api.EmailConnection;
-import org.mule.extension.email.internal.EmailProperties;
+import org.mule.extension.email.internal.EmailPropertiesFactory;
 import org.mule.extension.email.internal.PasswordAuthenticator;
 import org.mule.extension.email.internal.exception.EmailConnectionException;
 import org.mule.runtime.api.connection.ConnectionValidationResult;
@@ -37,6 +37,9 @@ public class SenderConnection implements EmailConnection
      * @param password the password corresponding to the {@code username}
      * @param host the host name of the mail server.
      * @param port the port number of the mail server.
+     * @param connectionTimeout the socket connection timeout
+     * @param readTimeout the socket read timeout
+     * @param writeTimeout the socket write timeout
      * @param properties the custom properties added to configure the session.
      */
     public SenderConnection(String protocol,
@@ -44,10 +47,12 @@ public class SenderConnection implements EmailConnection
                             String password,
                             String host,
                             String port,
+                            long connectionTimeout,
+                            long readTimeout,
+                            long writeTimeout,
                             Map<String, String> properties)
     {
-        Properties senderProps = EmailProperties.get(protocol, host, port, properties);
-
+        Properties senderProps = EmailPropertiesFactory.getPropertiesInstance(protocol, host, port, connectionTimeout, readTimeout, writeTimeout, properties);
         PasswordAuthenticator authenticator = null;
         if (user != null && password != null)
         {

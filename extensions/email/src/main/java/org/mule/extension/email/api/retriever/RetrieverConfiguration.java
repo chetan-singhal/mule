@@ -23,5 +23,5 @@ public interface RetrieverConfiguration
     /**
      * @return indicates whether the retrieved emails should be opened and read.
      */
-    boolean shouldReadContent();
+    boolean isEagerlyFetchContent();
 }

@@ -54,7 +54,7 @@ public class SMTPConnectionProvider extends AbstractEmailProvider implements Con
     @Override
     public SenderConnection connect(SMTPConfiguration config) throws ConnectionException
     {
-        return new SenderConnection(PROTOCOL_SMTP, getUser(), getPassword(), getHost(), getPort(), getProperties());
+        return new SenderConnection(PROTOCOL_SMTP, user, password, host, port, connectionTimeout, readTimeout, writeTimeout, properties);
     }
 
     /**
@@ -82,32 +82,5 @@ public class SMTPConnectionProvider extends AbstractEmailProvider implements Con
     public ConnectionHandlingStrategy<SenderConnection> getHandlingStrategy(ConnectionHandlingStrategyFactory<SMTPConfiguration, SenderConnection> handlingStrategyFactory)
     {
         return handlingStrategyFactory.supportsPooling();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getUser()
-    {
-        return user;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getPassword()
-    {
-        return password;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getPort()
-    {
-        return port;
     }
 }

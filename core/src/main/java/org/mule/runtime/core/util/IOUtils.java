@@ -37,9 +37,6 @@ import org.apache.commons.logging.LogFactory;
 public class IOUtils extends org.apache.commons.io.IOUtils
 {
 
-    /**
-     * Logger.
-     */
     private static final Log logger = LogFactory.getLog(IOUtils.class);
 
     protected static int bufferSize = NumberUtils.toInt(
@@ -274,7 +271,7 @@ public class IOUtils extends org.apache.commons.io.IOUtils
     }
 
     /**
-     * Transforms an Object attachment into a DataHandler of its corresponding type.
+     * Transforms an Object into a DataHandler of its corresponding type.
      *
      * @param name        the name of the attachment being handled
      * @param object      the attachment to be handled

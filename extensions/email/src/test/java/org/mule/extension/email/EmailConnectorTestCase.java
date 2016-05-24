@@ -25,14 +25,16 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 
-public abstract class EmailConnectorFunctionalTestCase extends ExtensionFunctionalTestCase
+public abstract class EmailConnectorTestCase extends ExtensionFunctionalTestCase
 {
     @Rule
     public DynamicPort PORT = new DynamicPort("port");
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     protected static final String SUBJECT = "Email Subject";
     protected static final String CONTENT = "Email Content";
@@ -56,8 +58,8 @@ public abstract class EmailConnectorFunctionalTestCase extends ExtensionFunction
         return new Class<?>[] {EmailConnector.class};
     }
 
-    @Before
-    public void start() throws Exception
+    @Override
+    protected void doSetUpBeforeMuleContextCreation() throws Exception
     {
         ServerSetup serverSetup = new ServerSetup(PORT.getNumber(), null, getProtocol());
         server = new GreenMail(serverSetup);
@@ -65,8 +67,8 @@ public abstract class EmailConnectorFunctionalTestCase extends ExtensionFunction
         user = server.setUser(JUANI_EMAIL, JUANI_EMAIL, "password");
     }
 
-    @After
-    public void stop()
+    @Override
+    protected void doTearDownAfterMuleContextDispose() throws Exception
     {
         server.stop();
     }

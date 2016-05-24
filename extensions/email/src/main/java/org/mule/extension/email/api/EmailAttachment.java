@@ -6,8 +6,6 @@
  */
 package org.mule.extension.email.api;
 
-import static org.mule.runtime.extension.api.introspection.parameter.ExpressionSupport.REQUIRED;
-import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.Parameter;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 
@@ -29,8 +27,7 @@ public class EmailAttachment
      * the content of the attachment.
      */
     @Parameter
-    @Expression(REQUIRED)
-    private Object data;
+    private Object content;
 
     /**
      * the content type of the attachment content.
@@ -50,9 +47,9 @@ public class EmailAttachment
     /**
      * @return the content of the attachment.
      */
-    public Object getData()
+    public Object getContent()
     {
-        return data;
+        return content;
     }
 
     /**

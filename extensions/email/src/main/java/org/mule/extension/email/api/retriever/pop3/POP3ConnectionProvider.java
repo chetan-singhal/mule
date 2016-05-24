@@ -22,6 +22,7 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 @Alias("pop3")
 public class POP3ConnectionProvider extends AbstractRetrieverProvider implements ConnectionProvider<POP3Configuration, RetrieverConnection>
 {
+
     @Parameter
     @Optional(defaultValue = PORT_IMAP)
     private String port;
@@ -29,7 +30,7 @@ public class POP3ConnectionProvider extends AbstractRetrieverProvider implements
     @Override
     public RetrieverConnection connect(POP3Configuration config) throws ConnectionException
     {
-        return new RetrieverConnection(PROTOCOL_POP3, getUser(), getPassword(), getHost(), getPort(), getProperties(), null, config.getFolder());
+        return new RetrieverConnection(PROTOCOL_POP3, user, password, host, port, connectionTimeout, readTimeout, writeTimeout, properties, null, config.getFolder());
     }
 
     @Override
@@ -47,12 +48,6 @@ public class POP3ConnectionProvider extends AbstractRetrieverProvider implements
     @Override
     public ConnectionHandlingStrategy<RetrieverConnection> getHandlingStrategy(ConnectionHandlingStrategyFactory<POP3Configuration, RetrieverConnection> connectionHandlingStrategyFactory)
     {
-        return connectionHandlingStrategyFactory.none();
-    }
-
-    @Override
-    public String getPort()
-    {
-        return port;
+        return connectionHandlingStrategyFactory.cached();
     }
 }

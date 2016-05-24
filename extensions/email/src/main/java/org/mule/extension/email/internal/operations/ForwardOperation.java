@@ -12,9 +12,7 @@ import org.mule.extension.email.internal.builder.MessageBuilder;
 import org.mule.extension.email.internal.exception.EmailSenderException;
 import org.mule.runtime.api.message.MuleMessage;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -37,23 +35,27 @@ public class ForwardOperation
      * this operation is going to fail.
      *
      * @param session the {@link Session} through which the message is going to be sent.
-     * @param muleMessage the incoming {@link MuleMessage} from which the email is going to get the content.
+     * @param muleMessage the incoming {@link MuleMessage} from which the email is going to getPropertiesInstance the content.
      * @param subject the subject of the email.
      * @param from the person who sends the email.
-     * @param toAddresses the recipient addresses of the email.
+     * @param toAddresses the primary recipient addresses of the email.
+     * @param ccAddresses the carbon copy recipient addresses of the email.
+     * @param bccAddresses the blind carbon copy recipient addresses of the email.
      */
     public void forward(Session session,
                         MuleMessage muleMessage,
                         String subject,
                         String from,
-                        List<String> toAddresses)
+                        List<String> toAddresses,
+                        List<String> ccAddresses,
+                        List<String> bccAddresses)
     {
 
-        Optional<EmailAttributes> attributes = getAttributesFromMessage(muleMessage);
+        EmailAttributes attributes = getAttributesFromMessage(muleMessage, "Cannot perform the forward operation if no email is provided.");
 
         if (subject == null)
         {
-            subject = attributes.isPresent() ? attributes.get().getSubject() : "No Subject";
+            subject = attributes.getSubject();
         }
 
         try
@@ -62,7 +64,9 @@ public class ForwardOperation
                     .withSubject("Fwd: " + subject)
                     .fromAddresses(from)
                     .to(toAddresses)
-                    .withAttachments(attributes.isPresent() ? attributes.get().getAttachments() : new HashMap<>())
+                    .cc(ccAddresses)
+                    .bcc(bccAddresses)
+                    .withAttachments(attributes.getAttachments())
                     .withContent(muleMessage.getPayload().toString())
                     .build();
 

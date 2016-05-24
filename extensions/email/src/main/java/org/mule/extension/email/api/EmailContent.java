@@ -7,6 +7,7 @@
 package org.mule.extension.email.api;
 
 import org.mule.runtime.extension.api.annotation.Parameter;
+import org.mule.runtime.extension.api.annotation.param.Optional;
 
 /**
  * Represents and enables the construction of the content
@@ -18,14 +19,20 @@ public class EmailContent
 
     /**
      * The text body of the message content.
+     * <p>
+     * The default value is an empty body.
      */
     @Parameter
+    @Optional(defaultValue = " ")
     private String body;
 
     /**
      * The contentType of the body. One of "text/html" or "text/plain"
+     * <p>
+     * The default value is "text/plain"
      */
     @Parameter
+    @Optional(defaultValue = "text/plain")
     private String contentType;
 
     /**

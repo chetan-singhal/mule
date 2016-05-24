@@ -11,7 +11,7 @@ package org.mule.extension.email.internal.util;
  *
  * @since 4.0
  */
-public class EmailConstants
+public final class EmailConstants
 {
 
     /**

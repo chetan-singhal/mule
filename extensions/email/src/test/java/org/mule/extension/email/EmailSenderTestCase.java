@@ -5,6 +5,7 @@ package org.mule.extension.email;/*
  * LICENSE.txt file.
  */
 
+import static java.lang.String.format;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -12,9 +13,9 @@ import static org.hamcrest.core.Is.isA;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.mule.extension.email.internal.builder.EmailAttributesBuilder.fromMessage;
-import static org.mule.extension.email.internal.operations.ReplyOperation.REPLY_ERROR;
+import static org.mule.extension.email.internal.util.EmailUtils.ATTRIBUTES_NOT_FOUND_MASK;
 import org.mule.extension.email.internal.EmailAttributes;
-import org.mule.extension.email.internal.exception.EmailSenderException;
+import org.mule.extension.email.internal.exception.EmailException;
 import org.mule.runtime.core.util.IOUtils;
 
 import java.io.InputStream;
@@ -25,15 +26,11 @@ import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.mail.internet.MimeMessage;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.internal.matchers.StartsWith;
 
-public class EmailSenderTestCase extends EmailConnectorFunctionalTestCase
+public class EmailSenderTestCase extends EmailConnectorTestCase
 {
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     private static final String SEND_EMAIL = "sendEmail";
     private static final String SEND_EMAIL_WITH_ATTACHMENT = "sendEmailWithAttachment";
@@ -109,20 +106,26 @@ public class EmailSenderTestCase extends EmailConnectorFunctionalTestCase
     @Test
     public void failReply() throws Exception
     {
-        expectedException.expectCause(isA(EmailSenderException.class));
-        expectedException.expectMessage(containsString(REPLY_ERROR));
+        expectedException.expectCause(isA(EmailException.class));
+        expectedException.expectMessage(containsString(format(ATTRIBUTES_NOT_FOUND_MASK, "")));
         runFlow(REPLY_EMAIL);
     }
 
     @Test
     public void forwardEmail() throws Exception
     {
-        final String content = "FORWARD " + CONTENT;
-        flowRunner(FORWARD_EMAIL).withPayload(content).run();
+        EmailAttributes attributes = fromMessage(defaultMimeMessageBuilder(JUANI_EMAIL)
+                                                         .replyTo(singletonList(MG_EMAIL))
+                                                         .build());
+        flowRunner(FORWARD_EMAIL)
+                .withPayload(CONTENT)
+                .withAttributes(attributes)
+                .run();
+
         assertThat(server.waitForIncomingEmail(5000, 1), is(true));
         MimeMessage[] messages = server.getReceivedMessages();
         assertThat(messages.length, is(1));
         assertThat(messages[0].getSubject(), new StartsWith("Fwd"));
-        assertThat(messages[0].getContent().toString().trim(), is(content));
+        assertThat(messages[0].getContent().toString().trim(), is(CONTENT));
     }
 }

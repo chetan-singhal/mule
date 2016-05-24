@@ -19,7 +19,7 @@ import javax.mail.MessagingException;
 
 import org.junit.Test;
 
-public abstract class AbstractEmailRetrieverTestCase extends EmailConnectorFunctionalTestCase
+public abstract class AbstractEmailRetrieverTestCase extends EmailConnectorTestCase
 {
 
     public static final String RETRIEVE_AND_READ = "retrieveAndRead";

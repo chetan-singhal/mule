@@ -16,7 +16,7 @@ package org.mule.extension.email.internal;
 public class EmailFlags
 {
 
-    public EmailFlags(Boolean answered, Boolean deleted, Boolean draft, Boolean recent, Boolean seen)
+    public EmailFlags(boolean answered, boolean deleted, boolean draft, boolean recent, boolean seen)
     {
         this.answered = answered;
         this.deleted = deleted;
@@ -25,52 +25,52 @@ public class EmailFlags
         this.seen = seen;
     }
 
-    private Boolean answered;
-    private Boolean deleted;
-    private Boolean draft;
-    private Boolean recent;
-    private Boolean seen;
+    private boolean answered;
+    private boolean deleted;
+    private boolean draft;
+    private boolean recent;
+    private boolean seen;
 
     /**
      * @return if this message has been answered.
      */
-    public Boolean answered()
+    public boolean isAnswered()
     {
         return answered;
     }
 
     /**
-     * @return if this message has been deleted.
+     * @return if this message has been isDeleted.
      */
-    public Boolean deleted()
+    public boolean isDeleted()
     {
         return deleted;
     }
 
     /**
-     * @return if this message is a draft.
+     * @return if this message is a isDraft.
      */
-    public Boolean draft()
+    public boolean isDraft()
     {
         return draft;
     }
 
     /**
-     * @return if this message is recent. Folder implementations set this flag
+     * @return if this message is isRecent. Folder implementations set this flag
      * to indicate that this message is new to this folder, that is,
      * it has arrived since the last time this folder was opened.
      */
-    public Boolean recent()
+    public boolean isRecent()
     {
         return recent;
     }
 
     /**
-     * @return if this message has been seen. This flag is implicitly set by the
+     * @return if this message has been isSeen. This flag is implicitly set by the
      * implementation when the the email content is returned
      * to the client in some form.
      */
-    public Boolean seen()
+    public boolean isSeen()
     {
         return seen;
     }

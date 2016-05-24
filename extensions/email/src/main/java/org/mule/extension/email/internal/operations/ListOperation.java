@@ -6,15 +6,17 @@
  */
 package org.mule.extension.email.internal.operations;
 
+import static javax.mail.Folder.READ_ONLY;
 import static org.mule.extension.email.internal.builder.EmailAttributesBuilder.fromMessage;
 import static org.mule.extension.email.internal.util.EmailUtils.getBody;
+import org.mule.extension.email.api.retriever.RetrieverConnection;
 import org.mule.extension.email.internal.EmailAttributes;
 import org.mule.extension.email.internal.exception.EmailRetrieverException;
 import org.mule.runtime.api.message.MuleMessage;
 import org.mule.runtime.core.DefaultMuleMessage;
 import org.mule.runtime.core.api.MuleContext;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.mail.Folder;
@@ -22,11 +24,11 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 
 /**
- * Represents the retrieve emails operation.
+ * Represents the list emails operation.
  *
  * @since 4.0
  */
-public class RetrieveOperation
+public class ListOperation
 {
 
     /**
@@ -39,16 +41,17 @@ public class RetrieveOperation
      * For folder implementations (like IMAP) that support fetching without reading the content, if the content
      * should NOT be read ({@code readContent} = false) the SEEN flag is not going to be setted.
      *
-     * @param folder the folder to fetch the emails from.
+     * @param connection the associated {@link RetrieverConnection}.
      * @param context the mule context to create the result message.
      * @param readContent if should read the email content or not.
      * @return a {@link List} of {@link MuleMessage} carrying all the emails and it's corresponding attributes.
      */
-    public List<MuleMessage<String, EmailAttributes>> retrieve(Folder folder, MuleContext context, boolean readContent)
+    public List<MuleMessage<String, EmailAttributes>> list(RetrieverConnection connection, MuleContext context, boolean readContent)
     {
+        Folder folder = connection.getOpenFolder(READ_ONLY);
         try
         {
-            List<MuleMessage<String, EmailAttributes>> list = new ArrayList<>();
+            List<MuleMessage<String, EmailAttributes>> list = new LinkedList<>();
             for (Message m : folder.getMessages())
             {
                 MuleMessage muleMessage = readContent ? new DefaultMuleMessage(getBody(m), null, fromMessage(m), context)
@@ -56,7 +59,7 @@ public class RetrieveOperation
 
                 list.add(muleMessage);
             }
-            folder.close(false);
+            connection.closeFolder(false);
             return list;
         }
         catch (MessagingException me)

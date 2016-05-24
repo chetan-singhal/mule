@@ -87,18 +87,24 @@ public class SenderOperations
      * @param muleMessage   the incoming {@link MuleMessage}.
      * @param subject       the subject of the message.
      * @param toAddresses   the "To" (primary) recipients.
+     * @param ccAddresses   the "Cc" (carbon copy) recipients.
+     * @param bccAddresses  the "Bcc" (blind carbon copy) recipients.
      */
     public void forward(@Connection SenderConnection connection,
                         @UseConfig SMTPConfiguration configuration,
                         MuleMessage muleMessage,
                         @Optional String subject,
-                        List<String> toAddresses)
+                        List<String> toAddresses,
+                        @Optional List<String> ccAddresses,
+                        @Optional List<String> bccAddresses)
     {
         new ForwardOperation().forward(connection.getSession(),
                                        muleMessage,
                                        subject,
                                        configuration.getFrom(),
-                                       toAddresses);
+                                       toAddresses,
+                                       ccAddresses,
+                                       bccAddresses);
     }
 
 

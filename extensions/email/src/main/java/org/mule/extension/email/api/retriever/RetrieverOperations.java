@@ -6,9 +6,8 @@
  */
 package org.mule.extension.email.api.retriever;
 
-import static javax.mail.Folder.READ_ONLY;
 import org.mule.extension.email.internal.EmailAttributes;
-import org.mule.extension.email.internal.operations.RetrieveOperation;
+import org.mule.extension.email.internal.operations.ListOperation;
 import org.mule.runtime.api.message.MuleMessage;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.extension.api.annotation.param.Connection;
@@ -18,7 +17,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 /**
- * A set of operations for all email configurations that aims to retrieve emails.
+ * A set of operations for all email configurations that aims to list emails.
  *
  * @since 4.0
  */
@@ -37,6 +36,6 @@ public class RetrieverOperations
      */
     public List<MuleMessage<String, EmailAttributes>> anotherRetrieve(@Connection RetrieverConnection connection)
     {
-        return new RetrieveOperation().retrieve(connection.getOpenFolder(READ_ONLY), context, true);
+        return new ListOperation().list(connection, context, true);
     }
 }

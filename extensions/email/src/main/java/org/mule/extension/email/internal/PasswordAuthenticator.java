@@ -12,8 +12,10 @@ import javax.mail.PasswordAuthentication;
 /**
  * An {@link Authenticator} object that knows how to obtain
  * authentication for a network connection using username and password.
+ *
+ * @since 4.0
  */
-public class PasswordAuthenticator extends Authenticator
+public final class PasswordAuthenticator extends Authenticator
 {
 
     private String user;

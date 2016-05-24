@@ -33,35 +33,24 @@ public abstract class AbstractEmailProvider
     @Optional
     protected Map<String, String> properties;
 
+    /**
+     * the client socket connection timeout.
+     */
+    @Parameter
+    @Optional
+    protected long connectionTimeout;
 
     /**
-     * @return the host name of the mail server.
+     * the client socket read timeout.
      */
-    public String getHost()
-    {
-        return host;
-    }
+    @Parameter
+    @Optional
+    protected long readTimeout;
 
     /**
-     * @return the custom properties added to configure the connection session.
+     * the client socket write timeout.
      */
-    public Map<String, String> getProperties()
-    {
-        return properties;
-    }
-
-    /**
-     * @return the username used to connect with the mail server.
-     */
-    public abstract String getUser();
-
-    /**
-     * @return the password corresponding to the username: {@code this#getUser()}.
-     */
-    public abstract String getPassword();
-
-    /**
-     * @return the port number of the mail server.
-     */
-    public abstract String getPort();
+    @Parameter
+    @Optional
+    protected long writeTimeout;
 }

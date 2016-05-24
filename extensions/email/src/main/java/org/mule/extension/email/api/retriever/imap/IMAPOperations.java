@@ -8,11 +8,9 @@ package org.mule.extension.email.api.retriever.imap;
 
 import static javax.mail.Flags.Flag.DELETED;
 import static javax.mail.Flags.Flag.SEEN;
-import static javax.mail.Folder.READ_ONLY;
-import static javax.mail.Folder.READ_WRITE;
 import org.mule.extension.email.api.retriever.RetrieverConnection;
 import org.mule.extension.email.internal.EmailAttributes;
-import org.mule.extension.email.internal.operations.RetrieveOperation;
+import org.mule.extension.email.internal.operations.ListOperation;
 import org.mule.extension.email.internal.operations.SetFlagOperation;
 import org.mule.runtime.api.message.MuleMessage;
 import org.mule.runtime.core.api.MuleContext;
@@ -36,15 +34,16 @@ public class IMAPOperations
     private MuleContext context;
 
     //TODO: ADD MATCHER.
+    //TODO: ADD PAGINATION SUPPORT WHEN AVAILABLE
     /**
      * List all the emails in the configured folder.
      *
      * @param connection  the corresponding {@link RetrieverConnection} instance.
      * @return a {@link List} of {@link MuleMessage} carrying all the emails and it's corresponding attributes.
      */
-    public List<MuleMessage<String, EmailAttributes>> retrieve(@UseConfig IMAPConfiguration config, @Connection RetrieverConnection connection)
+    public List<MuleMessage<String, EmailAttributes>> list(@UseConfig IMAPConfiguration config, @Connection RetrieverConnection connection)
     {
-        return new RetrieveOperation().retrieve(connection.getOpenFolder(READ_ONLY), context, config.shouldReadContent());
+        return new ListOperation().list(connection, context, config.isEagerlyFetchContent());
     }
 
     /**
@@ -58,13 +57,13 @@ public class IMAPOperations
      * @param emailNumber an optional email number to look up in the folder, if there is no email in the incoming {@link MuleMessage}.
      * @return
      */
-    public void read(MuleMessage message, @Connection RetrieverConnection connection, @Optional Integer emailNumber)
+    public void markAsRead(MuleMessage message, @Connection RetrieverConnection connection, @Optional Integer emailNumber)
     {
-        new SetFlagOperation().set(message, connection.getOpenFolder(READ_WRITE), emailNumber, SEEN, false);
+        new SetFlagOperation().set(message, connection, emailNumber, SEEN);
     }
 
     /**
-     * Marks an incoming email as DELETED. If {@code expunge} is true, the email is going to be deleted from the mailbox folder when it's closed.
+     * Marks an incoming email as DELETED. If {@code expunge} is true, the email is going to be isDeleted from the mailbox folder when it's closed.
      * <p>
      * This operation can target a single email, but also if the incoming {@link MuleMessage} is carrying a list of emails
      * this operation will mark all the emails that the {@link MuleMessage} is carrying.
@@ -72,10 +71,9 @@ public class IMAPOperations
      * @param message     the incoming {@link MuleMessage}.
      * @param connection  the corresponding {@link RetrieverConnection} instance.
      * @param emailNumber an optional email number to look up in the folder, if there is no email in the incoming {@link MuleMessage}.
-     * @param expunge     if true all the emails are going to be deleted from the mailbox.
      */
-    public void delete(MuleMessage message, @Connection RetrieverConnection connection, @Optional Integer emailNumber, @Optional(defaultValue = "false") boolean expunge)
+    public void markAsDeleted(MuleMessage message, @Connection RetrieverConnection connection, @Optional Integer emailNumber)
     {
-        new SetFlagOperation().set(message, connection.getOpenFolder(READ_WRITE), emailNumber, DELETED, expunge);
+        new SetFlagOperation().set(message, connection, emailNumber, DELETED);
     }
 }

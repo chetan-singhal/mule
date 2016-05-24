@@ -8,6 +8,7 @@ package org.mule.extension.email.api.retriever;
 
 import org.mule.extension.email.api.AbstractEmailProvider;
 import org.mule.runtime.extension.api.annotation.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.Password;
 import org.mule.runtime.extension.api.runtime.ConfigurationProvider;
 
 /**
@@ -28,23 +29,6 @@ public abstract class AbstractRetrieverProvider extends AbstractEmailProvider
      * the corresponding password for the {@code username}.
      */
     @Parameter
+    @Password
     protected String password;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getUser()
-    {
-        return user;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getPassword()
-    {
-        return password;
-    }
 }

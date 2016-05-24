@@ -43,7 +43,7 @@ public class POP3Configuration implements RetrieverConfiguration
      * The pop3 protocol always read the content when retrieves an email.
      */
     @Override
-    public boolean shouldReadContent()
+    public boolean isEagerlyFetchContent()
     {
         return true;
     }

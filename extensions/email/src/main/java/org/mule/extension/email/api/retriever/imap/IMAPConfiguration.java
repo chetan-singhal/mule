@@ -40,7 +40,7 @@ public class IMAPConfiguration implements RetrieverConfiguration
      */
     @Parameter
     @Optional(defaultValue = "true")
-    private boolean readContent;
+    private boolean eagerlyFetchContent;
 
     /**
      * {@inheritDoc}
@@ -55,8 +55,8 @@ public class IMAPConfiguration implements RetrieverConfiguration
      * {@inheritDoc}
      */
     @Override
-    public boolean shouldReadContent()
+    public boolean isEagerlyFetchContent()
     {
-        return readContent;
+        return eagerlyFetchContent;
     }
 }

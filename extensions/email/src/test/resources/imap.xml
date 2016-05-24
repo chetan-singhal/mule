@@ -6,37 +6,37 @@
                http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
 
 
-    <email:imap name="config" folder="INBOX">
+    <email:imap name="config">
         <email:imap-connection host="127.0.0.1" port="${port}" password="password" user="juan.desimoni@mulesoft.com">
         </email:imap-connection>
     </email:imap>
 
-    <email:imap name="config-dont-read" folder="INBOX" readContent="false">
+    <email:imap name="config-dont-read"  eagerlyFetchContent="false">
         <email:imap-connection host="127.0.0.1" port="${port}" password="password" user="juan.desimoni@mulesoft.com">
         </email:imap-connection>
     </email:imap>
 
     <flow name="retrieveAndRead">
-        <email:retrieve config-ref="config"/>
+        <email:list config-ref="config"/>
     </flow>
 
     <flow name="retrieveAndDontRead">
-        <email:retrieve config-ref="config-dont-read"/>
+        <email:list config-ref="config-dont-read"/>
     </flow>
 
     <flow name="retrieveAndMarkRead">
-        <email:retrieve config-ref="config"/>
-        <email:read config-ref="config"/>
+        <email:list config-ref="config"/>
+        <email:mark-as-read config-ref="config"/>
     </flow>
 
-    <flow name="retrieveAndThenExpungeDelete">
-        <email:retrieve config-ref="config"/>
-        <email:delete config-ref="config" expunge="true"/>
-    </flow>
+    <!--<flow name="retrieveAndThenExpungeDelete">-->
+        <!--<email:list config-ref="config"/>-->
+        <!--<email:mark-as-deleted config-ref="config"/>-->
+    <!--</flow>-->
 
     <flow name="retrieveAndMarkDelete">
-        <email:retrieve config-ref="config"/>
-        <email:delete config-ref="config"/>
+        <email:list config-ref="config"/>
+        <email:mark-as-deleted config-ref="config"/>
     </flow>
 
 </mule>

@@ -6,13 +6,16 @@
  */
 package org.mule.extension.email.internal.exception;
 
+import static org.mule.runtime.core.config.i18n.MessageFactory.createStaticMessage;
+import org.mule.runtime.core.api.MuleRuntimeException;
+
 /**
  * Is the base {@link RuntimeException} type for the Email Connector any other exceptions
  * thrown by the connector code will use or be based on this exception.
  *
  * @since 4.0
  */
-public class EmailException extends RuntimeException
+public class EmailException extends MuleRuntimeException
 {
 
     /**
@@ -22,7 +25,7 @@ public class EmailException extends RuntimeException
      */
     public EmailException(String message)
     {
-        super(message);
+        super(createStaticMessage(message));
     }
 
     /**
@@ -33,6 +36,6 @@ public class EmailException extends RuntimeException
      */
     public EmailException(String message, Throwable cause)
     {
-        super(message, cause);
+        super(createStaticMessage(message), cause);
     }
 }

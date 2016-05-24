@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.activation.DataHandler;
 import javax.mail.Message;
@@ -127,7 +128,10 @@ public class MessageBuilder
      */
     public MessageBuilder to(List<String> toAddresses) throws MessagingException
     {
-        this.message.setRecipients(TO, toAddressArray(toAddresses));
+        if (toAddresses != null)
+        {
+            this.message.setRecipients(TO, toAddressArray(toAddresses));
+        }
         return this;
     }
 
@@ -140,7 +144,10 @@ public class MessageBuilder
      */
     public MessageBuilder bcc(List<String> bccAddresses) throws MessagingException
     {
-        this.message.setRecipients(BCC, toAddressArray(bccAddresses));
+        if (bccAddresses != null)
+        {
+            this.message.setRecipients(BCC, toAddressArray(bccAddresses));
+        }
         return this;
     }
 
@@ -153,7 +160,11 @@ public class MessageBuilder
      */
     public MessageBuilder cc(List<String> ccAddresses) throws MessagingException
     {
-        this.message.setRecipients(CC, toAddressArray(ccAddresses));
+
+        if (ccAddresses != null)
+        {
+            this.message.setRecipients(CC, toAddressArray(ccAddresses));
+        }
         return this;
     }
 
@@ -166,9 +177,9 @@ public class MessageBuilder
      */
     public MessageBuilder withHeaders(Map<String, String> headers) throws MessagingException
     {
-        for (String h : headers.keySet())
+        for (Entry<String, String> entry : headers.entrySet())
         {
-            this.message.addHeader(h, headers.get(h));
+            this.message.addHeader(entry.getKey(), entry.getValue());
         }
         return this;
     }
@@ -186,7 +197,7 @@ public class MessageBuilder
         attachments.forEach(a -> {
             try
             {
-                DataHandler dataHandler = toDataHandler(a.getId(), a.getData(), a.getContentType());
+                DataHandler dataHandler = toDataHandler(a.getId(), a.getContent(), a.getContentType());
                 attachmentsMap.put(a.getId(), dataHandler);
             }
             catch (Exception e)

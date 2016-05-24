@@ -6,6 +6,7 @@
  */
 package org.mule.extension.email.internal.util;
 
+import static java.lang.String.format;
 import static javax.mail.Part.ATTACHMENT;
 import static org.mule.extension.email.internal.util.EmailConstants.MULTIPART;
 import static org.mule.extension.email.internal.util.EmailConstants.TEXT;
@@ -16,7 +17,6 @@ import org.mule.runtime.api.message.MuleMessage;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.activation.DataHandler;
 import javax.mail.Address;
@@ -33,6 +33,7 @@ import javax.mail.internet.InternetAddress;
  */
 public class EmailUtils
 {
+    public static final String ATTRIBUTES_NOT_FOUND_MASK = "No email attributes were found in the incoming message. %s";
 
     /**
      * Converts a simple {@link String} representing an address into an {@link InternetAddress} instance
@@ -48,7 +49,7 @@ public class EmailUtils
         }
         catch (AddressException e)
         {
-            throw new EmailException(String.format("Error while creating %s InternetAddress", address));
+            throw new EmailException(format("Error while creating %s InternetAddress", address));
         }
     }
 
@@ -65,23 +66,40 @@ public class EmailUtils
 
     /**
      * Extracts the incoming {@link MuleMessage} attributes of {@link EmailAttributes} type.
+     * <p>
+     * If no {@link EmailAttributes} are found in the incoming {@link MuleMessage}
+     * an exception with the {@code exceptionMessage} is thrown.
      *
-     * @param muleMessage the incoming {@link MuleMessage}.
-     * @return an Optional value with the {@link EmailAttributes}.
+     * @param muleMessage      the incoming {@link MuleMessage}.
+     * @param exceptionMessage i
+     * @return an value with the {@link EmailAttributes}.
      */
-    public static Optional<EmailAttributes> getAttributesFromMessage(MuleMessage muleMessage)
+    public static EmailAttributes getAttributesFromMessage(MuleMessage muleMessage, String exceptionMessage)
     {
         if (muleMessage.getAttributes() instanceof EmailAttributes)
         {
-            return Optional.ofNullable((EmailAttributes) muleMessage.getAttributes());
+            return (EmailAttributes) muleMessage.getAttributes();
         }
-        return Optional.empty();
+        throw new EmailException(format(ATTRIBUTES_NOT_FOUND_MASK, exceptionMessage));
+    }
+
+    /**
+     * Extracts the incoming {@link MuleMessage} attributes of {@link EmailAttributes} type.
+     * <p>
+     * If no {@link EmailAttributes} are found in the incoming {@link MuleMessage} an exception is thrown.
+     *
+     * @param muleMessage the incoming {@link MuleMessage}.
+     * @return an value with the {@link EmailAttributes}.
+     */
+    public static EmailAttributes getAttributesFromMessage(MuleMessage muleMessage)
+    {
+        return getAttributesFromMessage(muleMessage, "");
     }
 
     /**
      * Extracts the text body of an email part.
      *
-     * @param part the part to get the body from.
+     * @param part the part to getPropertiesInstance the body from.
      * @return the body of the part.
      */
     public static String getBody(Part part)
@@ -116,7 +134,7 @@ public class EmailUtils
     /**
      * Extracts the attachments of an email part.
      *
-     * @param part the part to get the attachments from.
+     * @param part the part to getPropertiesInstance the attachments from.
      * @return a {@link Map} with the email attachments.
      */
     public static Map<String, DataHandler> getAttachments(Part part)

@@ -14,16 +14,15 @@ import org.mule.runtime.extension.api.annotation.Configurations;
 import org.mule.runtime.extension.api.annotation.Extension;
 
 /**
- * Email connector used to retrieve and send emails and perform
- * operations in different mailboxes such as delete and mark as read.
+ * Email connector used to list and send emails and perform
+ * operations in different mailboxes, such as delete and mark as read.
  *
- * This connector works on top of the SMTP,
- * SMTPS, IMAP, IMAPS, POP3 and POP3s protocols.
+ * This connector supports the SMTP, SMTPS, IMAP, IMAPS, POP3 and POP3s protocols.
  *
  * @since 4.0
  */
 @Configurations({SMTPConfiguration.class, POP3Configuration.class, IMAPConfiguration.class})
-@Extension(name = "Email Connector", description = "Connector to send and retrieve email messages to and from mailboxes")
+@Extension(name = "Email Connector", description = "Connector to send and list email messages to and from mailboxes")
 public class EmailConnector
 {
 }

@@ -268,7 +268,7 @@ public class EmailAttributesBuilder
      * {@link Message} extracting all its attributes.
      *
      * @param msg the {@link Message} to extract attributes from.
-     * @param withAttachments if true, the message content will be opened to get the attachments.
+     * @param withAttachments if true, the message content will be opened to getPropertiesInstance the attachments.
      * @return a new {@link EmailAttributes} instance.
      */
     public static EmailAttributes fromMessage(Message msg, boolean withAttachments)

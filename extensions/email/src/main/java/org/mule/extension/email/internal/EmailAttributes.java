@@ -21,7 +21,7 @@ import javax.mail.Message;
 
 /**
  * Contains all the metadata of an email, it carries information such as
- * the subject of the email, the number in the mailbox and the recipitiens between others.
+ * the subject of the email, the id in the mailbox and the recipitiens between others.
  * <p>
  * This class aims to be returned as attributes in a {@link MuleMessage} for every
  * retriever operation.
@@ -34,7 +34,7 @@ import javax.mail.Message;
 public class EmailAttributes implements Serializable
 {
 
-    private int number;
+    private int id;
     private List<String> fromAddresses = new ArrayList<>();
     private List<String> toAddresses = new ArrayList<>();
     private List<String> ccAddresses = new ArrayList<>();
@@ -49,7 +49,7 @@ public class EmailAttributes implements Serializable
     /**
      * Creates a new instance.
      *
-     * @param number the number of the email.
+     * @param id the id of the email.
      * @param subject the subject of the email
      * @param fromAddresses the addresses that are sending the email.
      * @param toAddresses the primary addresses to deliver the email.
@@ -61,7 +61,7 @@ public class EmailAttributes implements Serializable
      * @param flags the {@link EmailFlags} setted on the email.
      * @param replyToAddresses the addresses to reply to this message.
      */
-    public EmailAttributes(int number,
+    public EmailAttributes(int id,
                            String subject,
                            List<String> fromAddresses,
                            List<String> toAddresses,
@@ -73,7 +73,7 @@ public class EmailAttributes implements Serializable
                            EmailFlags flags,
                            List<String> replyToAddresses)
     {
-        this.number = number;
+        this.id = id;
         this.attachments = attachments;
         this.bccAddresses = bccAddresses;
         this.ccAddresses = ccAddresses;
@@ -87,21 +87,21 @@ public class EmailAttributes implements Serializable
     }
 
     /**
-     * Get the Message number of the email.
-     * the number is the relative position of the email
-     * in its Folder. Note that the number for a
+     * Get the Message id of the email.
+     * the id is the relative position of the email
+     * in its Folder. Note that the id for a
      * particular email can change during a session
-     * if other emails in the Folder are deleted and expunged.
+     * if other emails in the Folder are isDeleted and expunged.
      * <p>
-     * Valid message numbers start at 1. Emails that do not belong
+     * Valid message ids start at 1. Emails that do not belong
      * to any folder (like newly composed or derived messages) have 0
-     * as their message number.
+     * as their message id.
      *
-     * @return the message number
+     * @return the message id
      */
-    public int getNumber()
+    public int getId()
     {
-        return number;
+        return id;
     }
 
     /**

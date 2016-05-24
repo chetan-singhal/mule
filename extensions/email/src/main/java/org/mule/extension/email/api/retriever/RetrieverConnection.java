@@ -7,11 +7,11 @@
 package org.mule.extension.email.api.retriever;
 
 import static java.lang.String.format;
-import static org.mule.runtime.api.connection.ConnectionExceptionCode.UNKNOWN;
+import static org.mule.extension.email.internal.EmailPropertiesFactory.getPropertiesInstance;
+import static org.mule.runtime.api.connection.ConnectionExceptionCode.DISCONNECTED;
 import static org.mule.runtime.api.connection.ConnectionValidationResult.failure;
 import static org.mule.runtime.api.connection.ConnectionValidationResult.success;
 import org.mule.extension.email.api.EmailConnection;
-import org.mule.extension.email.internal.EmailProperties;
 import org.mule.extension.email.internal.exception.EmailConnectionException;
 import org.mule.extension.email.internal.exception.EmailException;
 import org.mule.runtime.api.connection.ConnectionValidationResult;
@@ -45,20 +45,26 @@ public class RetrieverConnection implements EmailConnection
      * @param password the password corresponding to the {@code username}.
      * @param host the host name of the mail server
      * @param port the port number of the mail server.
+     * @param connectionTimeout the socket connection timeout
+     * @param readTimeout the socket read timeout
+     * @param writeTimeout the socket write timeout
      * @param properties additional custom properties.
      * @param authenticator custom authenticator to perform the connection with the mail server.
-     * @param folder the folder to be opened in order to retrieve emails.
+     * @param folder the folder to be opened in order to list emails.
      */
     public RetrieverConnection(String protocol,
                                String username,
                                String password,
                                String host,
                                String port,
+                               long connectionTimeout,
+                               long readTimeout,
+                               long writeTimeout,
                                Map<String, String> properties,
                                Authenticator authenticator,
                                String folder) throws EmailConnectionException
     {
-        Properties sessionProperties = EmailProperties.get(protocol, host, port, properties);
+        Properties sessionProperties = getPropertiesInstance(protocol, host, port, connectionTimeout, readTimeout, writeTimeout, properties);
         this.session = Session.getInstance(sessionProperties, authenticator);
         try
         {
@@ -76,19 +82,29 @@ public class RetrieverConnection implements EmailConnection
      * {@inheritDoc}
      */
     @Override
-    public void disconnect()
+    public synchronized void disconnect()
     {
         try
         {
-            store.close();
             if (folder.isOpen())
             {
-                folder.close(false);
+                closeFolder(false);
             }
         }
-        catch (MessagingException e)
+        catch (Exception e)
         {
             throw new EmailException("Error while disconnecting", e);
+        }
+        finally
+        {
+            try
+            {
+                store.close();
+            }
+            catch (MessagingException e)
+            {
+                throw new EmailException("Closing the store associated to this connection", e);
+            }
         }
     }
 
@@ -107,12 +123,13 @@ public class RetrieverConnection implements EmailConnection
     @Override
     public ConnectionValidationResult validate()
     {
-        String errorMessage = "";
-        return session != null && store.isConnected() ? success() : failure(errorMessage, UNKNOWN, new EmailConnectionException(errorMessage));
+        String errorMessage = "Store is not connected";
+        return store.isConnected() ? success()
+                                   : failure(errorMessage, DISCONNECTED, new EmailConnectionException(errorMessage));
     }
 
     /**
-     * opens and return the email {@link Folder} assosiated to this connection.
+     * opens and return the email {@link Folder} associated to this connection.
      * The folder can contain Messages, other Folders or both.
      *
      * @param mode open the folder READ_ONLY or READ_WRITE
@@ -122,12 +139,32 @@ public class RetrieverConnection implements EmailConnection
     {
         try
         {
-            folder.open(mode);
+            if (!folder.isOpen())
+            {
+                folder.open(mode);
+            }
             return folder;
         }
         catch (MessagingException e)
         {
             throw new EmailException(format("Error while opening folder [%s]", folder), e);
+        }
+    }
+
+    /**
+     * Closes the folder associated to this connection.
+     *
+     * @param expunge if should expunge the deleted messages from the mailbox or not.
+     */
+    public void closeFolder(boolean expunge)
+    {
+        try
+        {
+            folder.close(expunge);
+        }
+        catch (MessagingException e)
+        {
+            throw new EmailException(format("Error while closing the [%s] folder", folder.getName()), e);
         }
     }
 

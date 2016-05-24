@@ -6,6 +6,7 @@
  */
 package org.mule.extension.email.internal.operations;
 
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.mule.extension.email.internal.util.EmailUtils.getAttributesFromMessage;
 import org.mule.extension.email.api.EmailContent;
 import org.mule.extension.email.internal.EmailAttributes;
@@ -29,8 +30,6 @@ import javax.mail.Transport;
 public final class ReplyOperation
 {
 
-    public static final String REPLY_ERROR = "No email attributes were found in the incoming message.";
-
     /**
      * Replies an email message. The message will be sent to the addresses
      * associated to the replyTo attribute in the {@link EmailAttributes} of
@@ -39,7 +38,7 @@ public final class ReplyOperation
      * If no email message is found in the incoming {@link MuleMessage} this operation will fail.
      *
      * @param session the {@link Session} through which the message is going to be sent.
-     * @param muleMessage the incoming {@link MuleMessage} from which the email is going to get the content.
+     * @param muleMessage the incoming {@link MuleMessage} from which the email is going to getPropertiesInstance the content.
      * @param content the content of the reply message.
      * @param from the person who sends the email.
      * @param replyToAll if this reply should be sent to all recipients of this message,
@@ -51,12 +50,12 @@ public final class ReplyOperation
                       String from,
                       Boolean replyToAll)
     {
-        EmailAttributes attributes = getAttributesFromMessage(muleMessage)
-                                        .orElseThrow(() -> new EmailSenderException(REPLY_ERROR));
+        EmailAttributes attributes = getAttributesFromMessage(muleMessage, "Cannot perform the reply operation if no email is provided");
+
         try
         {
             List<String> replyTo = attributes.getReplyToAddresses();
-            if (replyTo == null || replyTo.isEmpty())
+            if (isEmpty(replyTo))
             {
                 replyTo = attributes.getToAddresses();
             }

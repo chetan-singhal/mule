@@ -6,11 +6,11 @@
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                http://www.mulesoft.org/schema/mule/httpn http://www.mulesoft.org/schema/mule/httpn/current/mule-httpn.xsd">
 
-    <httpn:request-config name="configWithBasePath" host="localhost" port="${httpPort}" basePath="#[basePath]">
-        <httpn:requester-connection/>
+    <httpn:request-config name="configWithBasePath" basePath="#[basePath]">
+        <httpn:requester-connection host="localhost" port="${httpPort}"/>
     </httpn:request-config>
-    <httpn:request-config name="configWithoutBasePath" host="localhost" port="${httpPort}">
-        <httpn:requester-connection/>
+    <httpn:request-config name="configWithoutBasePath">
+        <httpn:requester-connection host="localhost" port="${httpPort}"/>
     </httpn:request-config>
 
     <flow name="requestWithBasePath">

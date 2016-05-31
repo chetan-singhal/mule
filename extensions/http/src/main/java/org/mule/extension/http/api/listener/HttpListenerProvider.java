@@ -13,6 +13,7 @@ import static org.mule.runtime.module.http.api.HttpConstants.Protocols.HTTPS;
 import org.mule.extension.http.internal.listener.HttpListenerConnectionManager;
 import org.mule.extension.http.internal.listener.server.HttpServerConfiguration;
 import org.mule.runtime.api.connection.ConnectionException;
+import org.mule.runtime.api.connection.ConnectionExceptionCode;
 import org.mule.runtime.api.connection.ConnectionHandlingStrategy;
 import org.mule.runtime.api.connection.ConnectionHandlingStrategyFactory;
 import org.mule.runtime.api.connection.ConnectionProvider;
@@ -28,6 +29,7 @@ import org.mule.runtime.extension.api.annotation.Parameter;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.module.http.api.HttpConstants;
 import org.mule.runtime.module.http.internal.listener.Server;
+import org.mule.runtime.module.http.internal.listener.ServerAddress;
 
 import java.io.IOException;
 
@@ -163,7 +165,17 @@ public class HttpListenerProvider implements ConnectionProvider<HttpListenerConf
     @Override
     public ConnectionValidationResult validate(Server server)
     {
-        return ConnectionValidationResult.success();
+        if (server.isStopped() || server.isStopping())
+        {
+            ServerAddress serverAddress = server.getServerAddress();
+            return ConnectionValidationResult.failure(String.format("Server on host %s and port %s is stopped.", serverAddress.getIp(), serverAddress.getPort()),
+                                                      ConnectionExceptionCode.UNKNOWN,
+                                                      new ConnectionException("Server stopped."));
+        }
+        else
+        {
+            return ConnectionValidationResult.success();
+        }
     }
 
     @Override

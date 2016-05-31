@@ -11,7 +11,7 @@ import org.mule.extension.http.api.HttpResponseAttributes;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 
-public class HttpResponseAttributesMatchers
+public class HttpMessageAttributesMatchers
 {
     @Factory
     public static Matcher<HttpResponseAttributes> hasStatusCode(int statusCode)

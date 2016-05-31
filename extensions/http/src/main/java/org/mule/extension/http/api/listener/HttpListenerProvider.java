@@ -182,7 +182,7 @@ public class HttpListenerProvider implements ConnectionProvider<HttpListenerConf
     @Override
     public ConnectionHandlingStrategy<Server> getHandlingStrategy(ConnectionHandlingStrategyFactory<HttpListenerConfig, Server> handlingStrategyFactory)
     {
-        return handlingStrategyFactory.none();
+        return handlingStrategyFactory.cached();
     }
 
     private void verifyConnectionsParameters() throws InitialisationException

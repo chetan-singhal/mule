@@ -27,6 +27,7 @@ import org.mule.runtime.core.transformer.types.MimeTypes;
 import org.mule.runtime.core.util.DataTypeUtils;
 import org.mule.runtime.core.util.StringUtils;
 import org.mule.runtime.module.http.internal.HttpParser;
+import org.mule.runtime.module.http.internal.ParameterMap;
 import org.mule.runtime.module.http.internal.domain.ByteArrayHttpEntity;
 import org.mule.runtime.module.http.internal.domain.EmptyHttpEntity;
 import org.mule.runtime.module.http.internal.domain.HttpEntity;
@@ -79,8 +80,8 @@ public class MuleEventToHttpRequest
 
         builder.setUri(this.uri);
         builder.setMethod(this.method);
-        builder.setHeaders(requestBuilder.getHeaders());
-        builder.setQueryParams(requestBuilder.getQueryParams());
+        builder.setHeaders(toParameterMap(requestBuilder.getHeaders()));
+        builder.setQueryParams(toParameterMap(requestBuilder.getQueryParams()));
 
         if (!builder.getHeaders().containsKey(MuleProperties.CONTENT_TYPE_PROPERTY))
         {
@@ -116,6 +117,13 @@ public class MuleEventToHttpRequest
         builder.setEntity(createRequestEntity(builder, event, this.method, requestBuilder.getParts()));
 
         return builder;
+    }
+
+    private ParameterMap toParameterMap(Map<String, String> map)
+    {
+        ParameterMap parameterMap = new ParameterMap();
+        map.forEach(parameterMap::put);
+        return parameterMap;
     }
 
     private HttpEntity createRequestEntity(HttpRequestBuilder requestBuilder, MuleEvent muleEvent, String resolvedMethod, Map<String, DataHandler> parts) throws MessagingException

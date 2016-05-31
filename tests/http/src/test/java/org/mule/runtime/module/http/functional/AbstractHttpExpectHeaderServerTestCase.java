@@ -6,10 +6,12 @@
  */
 package org.mule.runtime.module.http.functional;
 
-import org.mule.functional.junit4.FunctionalTestCase;
-import org.mule.tck.junit4.rule.DynamicPort;
+import org.mule.extension.http.api.HttpConnector;
+import org.mule.functional.junit4.ExtensionFunctionalTestCase;
+import org.mule.module.socket.api.SocketsExtension;
 import org.mule.runtime.core.util.IOUtils;
 import org.mule.runtime.core.util.concurrent.Latch;
+import org.mule.tck.junit4.rule.DynamicPort;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -27,7 +29,7 @@ import org.junit.Rule;
  * Abstract class for tests that require a mock HTTP server that handles the "Expect" header. Provides methods
  * for starting mock servers that accept or reject the incoming request.
  */
-public abstract class AbstractHttpExpectHeaderServerTestCase extends FunctionalTestCase
+public abstract class AbstractHttpExpectHeaderServerTestCase extends ExtensionFunctionalTestCase
 {
 
     private static final String CONTINUE_RESPONSE = "HTTP/1.1 100 Continue\r\n\r\n";
@@ -39,6 +41,12 @@ public abstract class AbstractHttpExpectHeaderServerTestCase extends FunctionalT
     protected String requestBody;
 
     private AbstractMockServer server;
+
+    @Override
+    protected Class<?>[] getAnnotatedExtensionClasses()
+    {
+        return new Class<?>[] {SocketsExtension.class, HttpConnector.class};
+    }
 
     protected void startExpectContinueServer()
     {

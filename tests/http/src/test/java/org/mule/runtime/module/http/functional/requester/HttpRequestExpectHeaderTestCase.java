@@ -9,10 +9,10 @@ package org.mule.runtime.module.http.functional.requester;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mule.runtime.module.http.api.HttpConstants.HttpStatus.EXPECTATION_FAILED;
-import static org.mule.runtime.module.http.api.HttpConstants.ResponseProperties.HTTP_STATUS_PROPERTY;
 import static org.mule.runtime.module.http.api.HttpHeaders.Names.EXPECT;
 import static org.mule.runtime.module.http.api.HttpHeaders.Values.CONTINUE;
-
+import static org.mule.runtime.module.http.functional.matcher.HttpMessageAttributesMatchers.hasStatusCode;
+import org.mule.extension.http.api.HttpResponseAttributes;
 import org.mule.runtime.core.api.MuleEvent;
 import org.mule.runtime.module.http.functional.AbstractHttpExpectHeaderServerTestCase;
 
@@ -60,8 +60,8 @@ public class HttpRequestExpectHeaderTestCase extends AbstractHttpExpectHeaderSer
             }
         }).withOutboundProperty(EXPECT, CONTINUE).run();
 
-        assertThat(response.getMessage().<Integer>getInboundProperty(HTTP_STATUS_PROPERTY),
-                   equalTo(EXPECTATION_FAILED.getStatusCode()));
+        assertThat((HttpResponseAttributes) response.getMessage().getAttributes(),
+                   hasStatusCode(EXPECTATION_FAILED.getStatusCode()));
 
         stopServer();
     }

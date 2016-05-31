@@ -25,6 +25,6 @@
     <flow name="requesterContentTypeServer" >
         <httpn:listener config-ref="httpConf" path="requestServer"/>
 
-        <set-payload value="#[message.inboundProperties['Content-Type']]"/>
+        <set-payload value="#[message.getAttributes().getHeaders().get('content-type')]"/>
     </flow>
 </mule>

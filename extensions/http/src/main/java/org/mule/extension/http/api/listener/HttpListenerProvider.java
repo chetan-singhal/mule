@@ -65,6 +65,7 @@ public class HttpListenerProvider implements ConnectionProvider<HttpListenerConf
      * user needs to configure at least the keystore in the tls:context child element of this listener-config.
      */
     @Parameter
+    @Optional(defaultValue = "HTTP")
     @Expression(NOT_SUPPORTED)
     private HttpConstants.Protocols protocol;
 

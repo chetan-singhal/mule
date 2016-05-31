@@ -25,6 +25,7 @@ import org.junit.Test;
 @SmallTest
 public class HttpRequestConnectionsConfigurationTestCase extends AbstractMuleTestCase
 {
+    //Migrate to a functional test case
     private MuleContext mockMuleContext = mock(MuleContext.class, RETURNS_DEEP_STUBS.get());
 
     @Before
